@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Game Collection UI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            background: #0b0f14;
+            color: #e6e9ef;
+            font-family: 'Rajdhani', sans-serif;
+        }
+
+        /* ===== COLLECTION ===== */
+        #collectionView {
+            padding: 30px 40px;
+        }
+
+        .columns {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 30px;
+        }
+
+        .column {
+            background: #121923;
+            border: 1px solid #1e293b;
+            padding: 15px;
+        }
+
+        .column h3 {
+            margin: 0 0 15px;
+            color: #3fa9f5;
+            font-size: 24px;
+            border-bottom: 1px solid #1e293b;
+            padding-bottom: 8px;
+        }
+
+        /* MAIN STORY 2-column grid */
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .card {
+            background: #10161f;
+            border: 1px solid #1b2432;
+            cursor: pointer;
+            transition: .2s;
+        }
+
+
+        .card:hover {
+            background: #1a2332;
+            border-color: #3fa9f5;
+        }
+
+        .card img {
+            width: 100%;
+            height: 100px;
+            object-fit: cover;
+            flex-shrink: 0;
+        }
+
+        /* ===== SIDE + MISC ===== */
+        .side .card,
+        .misc .card {
+            width: 50%;
+            margin: 0 auto 15px;
+        }
+
+        .card .title {
+            padding: 6px 8px;
+            font-size: 13px;
+            text-align: center;
+        }
+
+        /* ===== COMPLETION ===== */
+        .completion {
+            margin-top: 40px;
+        }
+
+        .bar {
+            height: 18px;
+            background: #1a2230;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid #1e293b;
+        }
+
+        .bar-fill {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, #3fa9f5, #6cc6ff);
+        }
+
+        .percent {
+            text-align: right;
+            margin-top: 6px;
+            font-size: 20px;
+            color: #3fa9f5;
+            letter-spacing: 2px;
+        }
+
+        /* ===== DETAIL ===== */
+        #detailView {
+            display: none;
+            height: 100vh;
+        }
+
+        .detail-wrap {
+            display: grid;
+            grid-template-columns: 260px 1fr;
+            height: 100%;
+        }
+
+        .sidebar {
+            background: #111822;
+            border-right: 1px solid #1e293b;
+            padding: 15px;
+        }
+
+        .sidebar h4 {
+            margin-top: 0;
+            color: #3fa9f5;
+        }
+
+        .file {
+            padding: 6px 8px;
+            cursor: pointer;
+        }
+
+        .file:hover {
+            background: #1a2332;
+        }
+
+        .content {
+            background: #0e131a;
+            padding: 25px 35px;
+        }
+
+        /* ===== EXIT BUTTON (RED X) ===== */
+        .lang-exit {
+            position: fixed;
+            top: 18px;
+            right: 18px;
+            width: 42px;
+            height: 42px;
+            background: #2a0f14;
+            border: 1px solid #5a1a22;
+            cursor: pointer;
+            z-index: 40;
+            transition: .25s;
+        }
+
+        /* X icon */
+        .lang-exit::before,
+        .lang-exit::after {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 22px;
+            height: 2px;
+            background: #ff4d5a;
+        }
+
+        .lang-exit::before {
+            transform: translate(-50%, -50%) rotate(45deg);
+        }
+
+        .lang-exit::after {
+            transform: translate(-50%, -50%) rotate(-45deg);
+        }
+
+        /* hover effect */
+        .lang-exit:hover {
+            background: #3a141a;
+            border-color: #ff4d5a;
+            box-shadow: 0 0 16px rgba(255, 77, 90, .7);
+        }
+
+        .back {
+            background: #1a2332;
+            border: none;
+            color: #fff;
+            padding: 6px 14px;
+            cursor: pointer;
+            margin-bottom: 20px;
+        }
+
+        .back:hover {
+            background: #3fa9f5;
+        }
+
+        .meta {
+            font-size: 12px;
+            color: #9aa4b2;
+            margin-bottom: 20px;
+        }
+
+        .text {
+            white-space: pre-line;
+            line-height: 1.8;
+        }
+
+        /* ===== ANIMATION ===== */
+        .fade-enter {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+
+        .fade-enter-active {
+            opacity: 1;
+            transform: translateY(0);
+            transition: .35s;
+        }
+
+        .fade-exit-active {
+            opacity: 0;
+            transition: .25s;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- ===== COLLECTION VIEW ===== -->
+    <div id="collectionView">
+        <div class="lang-exit" onclick="goLanguage()" title="Exit"></div>
+        <div class="columns">
+
+            <!-- MAIN STORY -->
+            <div class="column">
+                <h3>MAIN STORY</h3>
+                <div class="main-grid">
+                    <div class="card" onclick="play(sndCard); openDetail('冰封世界')"><img src="img/main1.png">
+                        <div class="title">冰封世界</div>
+                    </div>
+                    <div class="card" onclick="play(sndCard); openDetail('废土之下')"><img src="img/main2.png">
+                        <div class="title">废土之下</div>
+                    </div>
+                    <div class="card" onclick="play(sndCard); openDetail('幽蓝边界')"><img src="img/main3.png">
+                        <div class="title">幽蓝边界</div>
+                    </div>
+                    <div class="card" onclick="play(sndCard); openDetail('管道迷宫')"><img src="img/main4.png">
+                        <div class="title">管道迷宫</div>
+                    </div>
+                    <div class="card" onclick="play(sndCard); openDetail('霓虹灯牌')"><img src="img/main5.png">
+                        <div class="title">霓虹灯牌</div>
+                    </div>
+                    <div class="card" onclick="play(sndCard); openDetail('方舟蜃景')"><img src="img/main6.png">
+                        <div class="title">方舟蜃景</div>
+                    </div>
+                    <div class="card" onclick="play(sndCard); openDetail('时钟链接')"><img src="img/main7.png">
+                        <div class="title">时钟链接</div>
+                    </div>
+                    <div class="card" onclick="play(sndCard); openDetail('凌日潮汐')"><img src="img/main8.png">
+                        <div class="title">凌日潮汐</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SIDE STORY -->
+            <div class="column side">
+                <h3>SIDE STORY</h3>
+                <div class="card" onclick="play(sndCard); openDetail('忘忧宫')"><img src="img/side1.png">
+                    <div class="title">忘忧宫</div>
+                </div>
+                <div class="card" onclick="play(sndCard); openDetail('弭刻日')"><img src="img/side2.png">
+                    <div class="title">弭刻日</div>
+                </div>
+                <div class="card" onclick="play(sndCard); openDetail('盗乐行')"><img src="img/side3.png">
+                    <div class="title">盗乐行</div>
+                </div>
+                <div class="card" onclick="play(sndCard); openDetail('无相乡')"><img src="img/side4.png">
+                    <div class="title">无相乡</div>
+                </div>
+            </div>
+
+            <!-- MISC -->
+            <div class="column misc">
+                <h3>MISC</h3>
+                <div class="card" onclick="play(sndCard); openDetail('Chapter EX')"><img src="img/misc1.png">
+                    <div class="title">Chapter EX</div>
+                </div>
+                <div class="card" onclick="play(sndCard); openDetail('Chapter EX')"><img src="img/misc1.png">
+                    <div class="title">Chapter EX</div>
+                </div>
+                <div class="card" onclick="play(sndCard); openDetail('Illustration')"><img src="img/misc2.png">
+                    <div class="title">Illustration</div>
+                </div>
+                <div class="card external" onclick="openExternal('https://wiki.pigeon-games.com/index.php?title=%E9%A6%96%E9%A1%B5')">
+                    <img src="img/limbo.png">
+                    <div class="title">Limbo</div>
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- COMPLETION -->
+        <div class="completion">
+            <div class="bar">
+                <div class="bar-fill"></div>
+            </div>
+            <div class="percent">100%</div>
+        </div>
+
+    </div>
+
+    <!-- ===== DETAIL VIEW ===== -->
+    <div id="detailView">
+        <div class="detail-wrap">
+
+            <div class="sidebar">
+                <h4>CONTENT</h4>
+                <div class="file" onclick="play(sndItem)">Stave No.17 Zer0</div>
+                <div class="file" onclick="play(sndItem)">Poem M2</div>
+                <div class="file" onclick="play(sndItem)">Poem 3ere</div>
+            </div>
+
+            <div class="content">
+                <button class="back" onclick="play(sndBack); back()">← BACK</button>
+                <h2 id="title">Stave No.17 Zer0</h2>
+                <div class="meta">DATE 770/05/23 · SUPERVISOR deathmark</div>
+                <div class="text">必然的背叛，无非发生早晚……</div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ===== SOUND ===== -->
+    <audio id="sndCard" src="sound/songInfoHide.wav" preload="auto"></audio>
+    <audio id="sndBack" src="sound/openSaturnOS.wav" preload="auto"></audio>
+    <audio id="sndItem" src="sound/songInfoShow.wav" preload="auto"></audio>
+
+    <script>
+        const collection = document.getElementById("collectionView");
+        const detail = document.getElementById("detailView");
+        const title = document.getElementById("title");
+
+        const sndCard = document.getElementById("sndCard");
+        const sndBack = document.getElementById("sndBack");
+        const sndItem = document.getElementById("sndItem");
+
+        sndCard.volume = 0.5;
+        sndBack.volume = 0.4;
+        sndItem.volume = 0.35;
+
+        function play(s) {
+            if (!s) return;
+            s.currentTime = 0;
+            s.play().catch(() => { });
+        }
+
+        function openDetail(name) {
+            collection.classList.add("fade-exit-active");
+            setTimeout(() => {
+                collection.style.display = "none";
+                detail.style.display = "block";
+                detail.classList.add("fade-enter");
+                title.innerText = name;
+                requestAnimationFrame(() => detail.classList.add("fade-enter-active"));
+                setTimeout(() => detail.classList.remove("fade-enter", "fade-enter-active"), 400);
+            }, 250);
+        }
+
+        function back() {
+            play(sndBack);
+
+            // reset trạng thái detail trước khi animate
+            detail.classList.remove("fade-enter", "fade-enter-active", "fade-exit-active");
+
+            detail.classList.add("fade-exit-active");
+
+            setTimeout(() => {
+                detail.style.display = "none";
+                detail.classList.remove("fade-exit-active");
+
+                // show collection
+                collection.style.display = "block";
+                collection.classList.remove("fade-enter", "fade-enter-active", "fade-exit-active");
+                collection.classList.add("fade-enter");
+
+                requestAnimationFrame(() => {
+                    collection.classList.add("fade-enter-active");
+                });
+
+                setTimeout(() => {
+                    collection.classList.remove("fade-enter", "fade-enter-active");
+                }, 400);
+
+            }, 250);
+        }
+        function goLanguage() {
+            play(sndBack); // nếu muốn có sound
+            setTimeout(() => {
+                window.location.href = "language.html";
+            }, 150);
+        }
+        function openExternal(url) {
+            play(sndCard);   // dùng sound click hiện tại
+            setTimeout(() => {
+                window.open(url, "_blank");
+            }, 150);
+        }
+
+
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,384 @@
+        body {
+            margin: 0;
+            background: #0b0f14;
+            color: #e6e9ef;
+            font-family: 'Rajdhani', sans-serif;
+        }
+
+        /* ===== COLLECTION ===== */
+        #collectionView {
+            padding: 30px 40px 30px 50px;
+            margin-left: 30px;
+        }
+
+        .columns {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 30px;
+        }
+
+        .column {
+            background: #121923;
+            border: 1px solid #1e293b;
+            padding: 15px;
+        }
+
+        .column h3 {
+            margin: 0 0 15px;
+            color: #3fa9f5;
+            font-size: 24px;
+            border-bottom: 1px solid #1e293b;
+            padding-bottom: 8px;
+        }
+
+        /* MAIN STORY 2-column grid */
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .card {
+            background: #10161f;
+            border: 1px solid #1b2432;
+            cursor: pointer;
+            transition: .2s;
+            position: relative;
+            overflow: hidden;
+        }
+
+
+
+        .card:hover {
+            background: #1a2332;
+            border-color: #3fa9f5;
+        }
+
+        .card img {
+            width: 100%;
+            height: 100px;
+            object-fit: cover;
+            flex-shrink: 0;
+        }
+
+        /* ===== SIDE + MISC ===== */
+        .side .card,
+        .misc .card {
+            width: 50%;
+            margin: 0 auto 15px;
+        }
+
+        .card .title {
+            position: absolute;
+            right: 0;
+            bottom: 0;
+
+            width: 75%;
+            padding: 10px 14px;
+            font-size: 18px;
+            font-weight: 500;
+            letter-spacing: 1px;
+
+            text-align: right;
+            color: #ffffff;
+
+            background: linear-gradient(to left,
+                    rgba(0, 0, 0, 0.85),
+                    rgba(0, 0, 0, 0.55),
+                    rgba(0, 0, 0, 0));
+
+            box-sizing: border-box;
+            pointer-events: none;
+        }
+
+        .card:hover .title {
+            color: #6cc6ff;
+            text-shadow: 0 0 10px rgba(63, 169, 245, .9);
+        }
+
+        /* ===== COMPLETION ===== */
+        .completion {
+            margin-top: 40px;
+        }
+
+        .bar {
+            height: 18px;
+            background: #1a2230;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid #1e293b;
+        }
+
+        .bar-fill {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, #3fa9f5, #6cc6ff);
+        }
+
+        .percent {
+            text-align: right;
+            margin-top: 6px;
+            font-size: 20px;
+            color: #3fa9f5;
+            letter-spacing: 2px;
+        }
+
+        /* ===== DETAIL ===== */
+        #detailView {
+            display: none;
+            height: 100vh;
+            margin-left: 80px;
+        }
+
+        .detail-wrap {
+            display: grid;
+            grid-template-columns: 260px 1fr;
+            height: 100%;
+        }
+
+        .sidebar {
+            background: #111822;
+            border-right: 1px solid #1e293b;
+            padding: 15px;
+        }
+
+        /* ===== FOLDER INFO (NEW) ===== */
+        .folder-header {
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 20px;
+            color: #7dd3fc;
+            margin-bottom: 15px;
+            margin-top: 10px;
+        }
+
+        .folder-image {
+            position: relative;
+            border: 1px solid #1e293b;
+            margin-bottom: 15px;
+        }
+
+        .folder-image img {
+            width: 100%;
+            display: block;
+        }
+
+        .chapter-name {
+            position: absolute;
+            bottom: 8px;
+            right: 8px;
+            font-size: 14px;
+            color: #fff;
+            background: rgba(0, 0, 0, .6);
+            padding: 4px 8px;
+        }
+
+        .sidebar h4 {
+            margin-top: 0;
+            color: #3fa9f5;
+        }
+
+        /* ===== FILE LIST ===== */
+        .file {
+            padding: 10px 12px;
+            cursor: pointer;
+            border-left: 3px solid transparent;
+            color: #cbd5e1;
+        }
+
+        .file:hover {
+            background: #1a2332;
+        }
+
+        .file.active {
+            background: #ffffff;
+            color: #0f172a;
+            border-left: 3px solid #3fa9f5;
+            font-weight: 600;
+        }
+
+        /* ===== CONTENT ===== */
+        .content {
+            background: #0e131a;
+            padding: 25px 35px;
+        }
+
+        /* ===== EXIT BUTTON (RED X) ===== */
+        .lang-exit {
+            position: fixed;
+            top: 18px;
+            right: 18px;
+            width: 42px;
+            height: 42px;
+            background: #2a0f14;
+            border: 1px solid #5a1a22;
+            cursor: pointer;
+            z-index: 40;
+            transition: .25s;
+        }
+
+        /* X icon */
+        .lang-exit::before,
+        .lang-exit::after {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 22px;
+            height: 2px;
+            background: #ff4d5a;
+        }
+
+        .lang-exit::before {
+            transform: translate(-50%, -50%) rotate(45deg);
+        }
+
+        .lang-exit::after {
+            transform: translate(-50%, -50%) rotate(-45deg);
+        }
+
+        /* hover effect */
+        .lang-exit:hover {
+            background: #3a141a;
+            border-color: #ff4d5a;
+            box-shadow: 0 0 16px rgba(255, 77, 90, .7);
+        }
+
+        .back {
+            background: #1a2332;
+            border: none;
+            color: #fff;
+            padding: 6px 14px;
+            cursor: pointer;
+            margin-bottom: 20px;
+        }
+
+        .back:hover {
+            background: #3fa9f5;
+        }
+
+        h2 {
+            font-size: 36px;
+            margin: 0 0 10px;
+        }
+
+        /* ===== META (NEW STYLE) ===== */
+        .meta {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+            font-weight: bolder;
+        }
+
+        .meta span {
+            background: #ffffff;
+            color: #020617;
+            padding: 6px 12px;
+            font-size: 15px;
+            font-weight:500;
+            letter-spacing: .5px;
+        }
+
+        .text {
+            white-space: pre-line;
+            line-height: 1.8;
+            font-size: 16px;
+        }
+
+
+        .meta-divider {
+            height: 2px;
+            width: 100%;
+            background: red;
+            /* bạn đổi màu sau */
+            margin: 18px 0 22px;
+        }
+
+        /* ===== ANIMATION ===== */
+        .fade-enter {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+
+        .fade-enter-active {
+            opacity: 1;
+            transform: translateY(0);
+            transition: .35s;
+        }
+
+        .fade-exit-active {
+            opacity: 0;
+            transition: .25s;
+        }
+
+        /* ===== AUDIO PANEL ===== */
+        .audio-panel {
+            position: fixed;
+            top: 0;
+            left: 0;
+
+            width: 80px;
+            height: 100vh;
+
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 14px;
+
+            padding-top: 30px;
+
+
+            z-index: 50;
+        }
+
+
+        /* PLAY / PAUSE BUTTON */
+        #bgmToggle {
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            background: #111827;
+            border: 1px solid #334155;
+            position: relative;
+        }
+
+        /* PLAY ICON */
+        #bgmToggle.play::before {
+            content: "";
+            position: absolute;
+            left: 15px;
+            top: 10px;
+            width: 0;
+            height: 0;
+            border-left: 12px solid #3fa9f5;
+            border-top: 8px solid transparent;
+            border-bottom: 8px solid transparent;
+
+        }
+
+        /* PAUSE ICON */
+        #bgmToggle.pause::before,
+        #bgmToggle.pause::after {
+            content: "";
+            position: absolute;
+            top: 10px;
+            width: 5px;
+            height: 20px;
+            background: #3fa9f5;
+        }
+
+        #bgmToggle.pause::before {
+            left: 12px;
+        }
+
+        #bgmToggle.pause::after {
+            right: 12px;
+        }
+
+        /* VOLUME SLIDER (VERTICAL) */
+        #bgmVolume {
+            writing-mode: bt-lr;
+            -webkit-appearance: slider-vertical;
+            width: 6px;
+            height: 100px;
+            cursor: pointer;
+        }

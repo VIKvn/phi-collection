@@ -5,290 +5,46 @@
     <meta charset="UTF-8">
     <title>Game Collection UI</title>
     <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600&display=swap" rel="stylesheet">
-    <style>
-        body {
-            margin: 0;
-            background: #0b0f14;
-            color: #e6e9ef;
-            font-family: 'Rajdhani', sans-serif;
-        }
-
-        /* ===== COLLECTION ===== */
-        #collectionView {
-            padding: 30px 40px;
-        }
-
-        .columns {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 30px;
-        }
-
-        .column {
-            background: #121923;
-            border: 1px solid #1e293b;
-            padding: 15px;
-        }
-
-        .column h3 {
-            margin: 0 0 15px;
-            color: #3fa9f5;
-            font-size: 24px;
-            border-bottom: 1px solid #1e293b;
-            padding-bottom: 8px;
-        }
-
-        /* MAIN STORY 2-column grid */
-        .main-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-        }
-
-.card{
-    background:#10161f;
-    border:1px solid #1b2432;
-    cursor:pointer;
-    transition:.2s;
-    position:relative;
-    overflow:hidden;
-}
-
-
-
-        .card:hover {
-            background: #1a2332;
-            border-color: #3fa9f5;
-        }
-
-        .card img {
-            width: 100%;
-            height: 100px;
-            object-fit: cover;
-            flex-shrink: 0;
-        }
-
-        /* ===== SIDE + MISC ===== */
-        .side .card,
-        .misc .card {
-            width: 50%;
-            margin: 0 auto 15px;
-        }
-
-.card .title{
-    position: absolute;
-    right: 0;
-    bottom: 0;
-
-    width: 75%;              /* nền kéo dài */
-    padding: 10px 14px;
-
-    font-size: 18px;          /* to hơn */
-    font-weight: 500;         /* béo */
-    letter-spacing: 1px;
-
-    text-align: right;
-    color: #ffffff;
-
-    background: linear-gradient(
-        to left,
-        rgba(0,0,0,0.85),
-        rgba(0,0,0,0.55),
-        rgba(0,0,0,0)
-    );
-
-    box-sizing: border-box;
-    pointer-events: none;     /* tránh block click */
-}
-
-.card:hover .title{
-    color:#6cc6ff;
-    text-shadow:0 0 10px rgba(63,169,245,.9);
-}
-
-
-
-        /* ===== COMPLETION ===== */
-        .completion {
-            margin-top: 40px;
-        }
-
-        .bar {
-            height: 18px;
-            background: #1a2230;
-            border-radius: 10px;
-            overflow: hidden;
-            border: 1px solid #1e293b;
-        }
-
-        .bar-fill {
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, #3fa9f5, #6cc6ff);
-        }
-
-        .percent {
-            text-align: right;
-            margin-top: 6px;
-            font-size: 20px;
-            color: #3fa9f5;
-            letter-spacing: 2px;
-        }
-
-        /* ===== DETAIL ===== */
-        #detailView {
-            display: none;
-            height: 100vh;
-        }
-
-        .detail-wrap {
-            display: grid;
-            grid-template-columns: 260px 1fr;
-            height: 100%;
-        }
-
-        .sidebar {
-            background: #111822;
-            border-right: 1px solid #1e293b;
-            padding: 15px;
-        }
-
-        .sidebar h4 {
-            margin-top: 0;
-            color: #3fa9f5;
-        }
-
-        .file {
-            padding: 6px 8px;
-            cursor: pointer;
-        }
-
-        .file:hover {
-            background: #1a2332;
-        }
-
-        .content {
-            background: #0e131a;
-            padding: 25px 35px;
-        }
-
-        /* ===== EXIT BUTTON (RED X) ===== */
-        .lang-exit {
-            position: fixed;
-            top: 18px;
-            right: 18px;
-            width: 42px;
-            height: 42px;
-            background: #2a0f14;
-            border: 1px solid #5a1a22;
-            cursor: pointer;
-            z-index: 40;
-            transition: .25s;
-        }
-
-        /* X icon */
-        .lang-exit::before,
-        .lang-exit::after {
-            content: "";
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 22px;
-            height: 2px;
-            background: #ff4d5a;
-        }
-
-        .lang-exit::before {
-            transform: translate(-50%, -50%) rotate(45deg);
-        }
-
-        .lang-exit::after {
-            transform: translate(-50%, -50%) rotate(-45deg);
-        }
-
-        /* hover effect */
-        .lang-exit:hover {
-            background: #3a141a;
-            border-color: #ff4d5a;
-            box-shadow: 0 0 16px rgba(255, 77, 90, .7);
-        }
-
-        .back {
-            background: #1a2332;
-            border: none;
-            color: #fff;
-            padding: 6px 14px;
-            cursor: pointer;
-            margin-bottom: 20px;
-        }
-
-        .back:hover {
-            background: #3fa9f5;
-        }
-
-        .meta {
-            font-size: 12px;
-            color: #9aa4b2;
-            margin-bottom: 20px;
-        }
-
-        .text {
-            white-space: pre-line;
-            line-height: 1.8;
-        }
-
-        /* ===== ANIMATION ===== */
-        .fade-enter {
-            opacity: 0;
-            transform: translateY(10px);
-        }
-
-        .fade-enter-active {
-            opacity: 1;
-            transform: translateY(0);
-            transition: .35s;
-        }
-
-        .fade-exit-active {
-            opacity: 0;
-            transition: .25s;
-        }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
+    <div class="audio-panel">
+        <button id="bgmToggle" title="Play / Pause"></button>
+        <input id="bgmVolume" type="range" min="0" max="100" value="40">
+    </div>
+
 
     <!-- ===== COLLECTION VIEW ===== -->
     <div id="collectionView">
         <div class="lang-exit" onclick="goLanguage()" title="Exit"></div>
         <div class="columns">
-
             <!-- MAIN STORY -->
             <div class="column">
                 <h3>MAIN STORY</h3>
                 <div class="main-grid">
-                    <div class="card" onclick="play(sndCard); openDetail('Glaciaxion')"><img src="img/main1.png">
+                    <div class="card" onclick="play(sndCard); openDetail('main1')"><img src="img/main1.png">
                         <div class="title">Glaciaxion</div>
                     </div>
-                    <div class="card" onclick="play(sndCard); openDetail('Beneath the Trash')"><img src="img/main2.png">
+                    <div class="card" onclick="play(sndCard); openDetail('main2')"><img src="img/main2.png">
                         <div class="title">Beneath the Trash</div>
                     </div>
-                    <div class="card" onclick="play(sndCard); openDetail('Mazarine &apos; End')"><img src="img/main3.png">
+                    <div class="card" onclick="play(sndCard); openDetail('main3')"><img src="img/main3.png">
                         <div class="title">Mazarine's End</div>
                     </div>
-                    <div class="card" onclick="play(sndCard); openDetail('Sewer Maze')"><img src="img/main4.png">
+                    <div class="card" onclick="play(sndCard); openDetail('main4')"><img src="img/main4.png">
                         <div class="title">Sewer Maze</div>
                     </div>
-                    <div class="card" onclick="play(sndCard); openDetail('NEON LED')"><img src="img/main5.png">
+                    <div class="card" onclick="play(sndCard); openDetail('main5')"><img src="img/main5.png">
                         <div class="title">NEON LED</div>
                     </div>
-                    <div class="card" onclick="play(sndCard); openDetail('Ark Mirage')"><img src="img/main6.png">
+                    <div class="card" onclick="play(sndCard); openDetail('main6')"><img src="img/main6.png">
                         <div class="title">Ark Mirage</div>
                     </div>
-                    <div class="card" onclick="play(sndCard); openDetail('Chronnection')"><img src="img/main7.png">
+                    <div class="card" onclick="play(sndCard); openDetail('main7')"><img src="img/main7.png">
                         <div class="title">Chronnection</div>
                     </div>
-                    <div class="card" onclick="play(sndCard); openDetail('Transit Tide')"><img src="img/main8.png">
+                    <div class="card" onclick="play(sndCard); openDetail('main8')"><img src="img/main8.png">
                         <div class="title">Transit Tide</div>
                     </div>
                 </div>
@@ -320,10 +76,12 @@
                 <div class="card" onclick="play(sndCard); openDetail('BassAreUs')"><img src="img/bassareus.png">
                     <div class="title">BassAreUs</div>
                 </div>
-                <div class="card" onclick="play(sndCard); openDetail('Illustration')"><img src="img/IllustrationsCover.png">
+                <div class="card" onclick="play(sndCard); openDetail('Illustration')"><img
+                        src="img/IllustrationsCover.png">
                     <div class="title">Illustration</div>
                 </div>
-                <div class="card external" onclick="openExternal('https://wiki.pigeon-games.com/index.php?title=%E9%A6%96%E9%A1%B5')">
+                <div class="card external"
+                    onclick="openExternal('https://wiki.pigeon-games.com/index.php?title=%E9%A6%96%E9%A1%B5')">
                     <img src="img/limbo.png">
                     <div class="title">Limbo</div>
                 </div>
@@ -342,24 +100,27 @@
 
     </div>
 
-    <!-- ===== DETAIL VIEW ===== -->
+    <!-- ===== DETAIL ===== -->
     <div id="detailView">
         <div class="detail-wrap">
-
             <div class="sidebar">
+                <div class="folder-header">FOLDER INFORMATION</div>
+                <div class="folder-image">
+                    <img id="chapterImg">
+                    <div class="chapter-name" id="chapterName"></div>
+                </div>
+
                 <h4>CONTENT</h4>
-                <div class="file" onclick="play(sndItem)">Stave No.17 Zer0</div>
-                <div class="file" onclick="play(sndItem)">Poem M2</div>
-                <div class="file" onclick="play(sndItem)">Poem 3ere</div>
+                <div id="fileList"></div>
             </div>
 
             <div class="content">
                 <button class="back" onclick="play(sndBack); back()">← BACK</button>
-                <h2 id="title">Stave No.17 Zer0</h2>
-                <div class="meta">DATE 770/05/23 · SUPERVISOR deathmark</div>
-                <div class="text">必然的背叛，无非发生早晚……</div>
+                <h2 id="title"></h2>
+                <div class="meta" id="meta"></div>
+                <div class="meta-divider"></div>
+                <div class="text" id="text"></div>
             </div>
-
         </div>
     </div>
 
@@ -367,8 +128,44 @@
     <audio id="sndCard" src="sound/songInfoHide.wav" preload="auto"></audio>
     <audio id="sndBack" src="sound/openSaturnOS.wav" preload="auto"></audio>
     <audio id="sndItem" src="sound/songInfoShow.wav" preload="auto"></audio>
+    <audio id="bgm" src="sound/Collecation0.mp3" preload="auto" loop></audio>
 
     <script>
+        const bgm = document.getElementById("bgm");
+        const bgmToggle = document.getElementById("bgmToggle");
+        const bgmVolume = document.getElementById("bgmVolume");
+
+        /* INITIAL STATE */
+        bgm.volume = 0.4;
+        bgmToggle.classList.add("pause");
+
+        /* AUTO PLAY WHEN PAGE LOAD */
+        window.addEventListener("click", () => {
+            if (bgm.paused) {
+                bgm.currentTime = 0;
+                bgm.play().catch(() => { });
+            }
+        }, { once: true });
+
+        /* PLAY / PAUSE BUTTON */
+        bgmToggle.onclick = () => {
+            if (bgm.paused) {
+                bgm.currentTime = 0;   // luôn phát lại từ đầu
+                bgm.play();
+                bgmToggle.classList.remove("play");
+                bgmToggle.classList.add("pause");
+            } else {
+                bgm.pause();
+                bgmToggle.classList.remove("pause");
+                bgmToggle.classList.add("play");
+            }
+        };
+
+        /* VOLUME CONTROL */
+        bgmVolume.oninput = () => {
+            bgm.volume = bgmVolume.value / 100;
+        };
+
         const collection = document.getElementById("collectionView");
         const detail = document.getElementById("detailView");
         const title = document.getElementById("title");
@@ -380,6 +177,73 @@
         sndCard.volume = 0.5;
         sndBack.volume = 0.4;
         sndItem.volume = 0.35;
+        const meta = document.getElementById("meta");
+        const text = document.getElementById("text");
+        const fileList = document.getElementById("fileList");
+        const chapterImg = document.getElementById("chapterImg");
+        const chapterName = document.getElementById("chapterName");
+
+        function buildMeta(metaText, category) {
+            const parts = metaText.split(" · ");
+            return `<span>${parts[0]}</span><span>${parts[1]}</span><span>CATEGORY ${category}</span>`;
+        }
+
+        function openDetail(key) {
+            const chapter = CHAPTER_DATA[key];
+            if (!chapter) return;
+
+            /* ===== FADE OUT COLLECTION ===== */
+            collection.classList.add("fade-exit-active");
+
+            setTimeout(() => {
+                /* ===== SWITCH VIEW ===== */
+                collection.style.display = "none";
+                collection.classList.remove("fade-exit-active");
+
+                detail.style.display = "block";
+                detail.classList.add("fade-enter");
+
+                /* ===== LOAD CHAPTER INFO ===== */
+                chapterImg.src = chapter.chapterImg;
+                chapterName.innerText = chapter.chapterName;
+                fileList.innerHTML = "";
+
+                chapter.contentList.forEach((item, i) => {
+                    const div = document.createElement("div");
+                    div.className = "file";
+                    div.innerText = item.name;
+
+                    div.onclick = () => {
+                        play(sndItem); // 
+                        [...fileList.children].forEach(f => f.classList.remove("active"));
+                        div.classList.add("active");
+                        title.innerText = item.name;
+                        meta.innerHTML = buildMeta(item.meta, chapter.category);
+                        text.innerText = item.text;
+                    };
+
+                    fileList.appendChild(div);
+
+                    /* ===== AUTO LOAD FILE (NO SOUND) ===== */
+                    if (i === 0) {
+                        div.classList.add("active");
+                        title.innerText = item.name;
+                        meta.innerHTML = buildMeta(item.meta, chapter.category);
+                        text.innerText = item.text;
+                    }
+                });
+
+                /* ===== FADE IN DETAIL ===== */
+                requestAnimationFrame(() => {
+                    detail.classList.add("fade-enter-active");
+                });
+
+                setTimeout(() => {
+                    detail.classList.remove("fade-enter", "fade-enter-active");
+                }, 400);
+
+            }, 250);
+        }
 
         function play(s) {
             if (!s) return;
@@ -387,22 +251,10 @@
             s.play().catch(() => { });
         }
 
-        function openDetail(name) {
-            collection.classList.add("fade-exit-active");
-            setTimeout(() => {
-                collection.style.display = "none";
-                detail.style.display = "block";
-                detail.classList.add("fade-enter");
-                title.innerText = name;
-                requestAnimationFrame(() => detail.classList.add("fade-enter-active"));
-                setTimeout(() => detail.classList.remove("fade-enter", "fade-enter-active"), 400);
-            }, 250);
-        }
-
         function back() {
             play(sndBack);
 
-            // reset trạng thái detail trước khi animate
+            // reset  detail before animate
             detail.classList.remove("fade-enter", "fade-enter-active", "fade-exit-active");
 
             detail.classList.add("fade-exit-active");
@@ -427,18 +279,77 @@
             }, 250);
         }
         function goLanguage() {
-            play(sndBack); // nếu muốn có sound
+            play(sndBack); // if you need sound
             setTimeout(() => {
                 window.location.href = "language.html";
             }, 150);
         }
         function openExternal(url) {
-            play(sndCard);   // dùng sound click hiện tại
+            play(sndCard);   // use current sound click 
             setTimeout(() => {
                 window.open(url, "_blank");
             }, 150);
         }
 
+
+
+    </script>
+    <script>
+        /* DATA  */
+        const CHAPTER_DATA = {
+            main1: {
+                chapterName: "Glaciaxion",
+                chapterImg: "img/main1.png",
+                category: "main",
+                contentList: [
+                    {
+                        name: "Stave No.0",
+                        meta: "DATE 770/05/21 · SUPERVISOR Mirror",
+                        text: "For once you were a wandering organism..."
+                    },
+                    {
+                        name: "Stave No.1",
+                        meta: "DATE 770/05/22 · SUPERVISOR Mirror",
+                        text: "Like white vines on a holy stone..."
+                    }
+                ]
+            },
+
+            main2: {
+                chapterName: "Beneath the Trash",
+                chapterImg: "img/main2.png",
+                category: "main",
+                contentList: [
+                    {
+                        name: "Stave No.7",
+                        meta: "DATE 770/04/01 · SUPERVISOR Deathmark",
+                        text: "Has it started?\n\nAwoken from a dream..."
+                    }
+                ]
+            },
+            main3: {
+                chapterName: "Mazarine's End",
+                chapterImg: "img/main3.png",
+                category: "main",
+                contentList: [
+                    {
+                        name: "Stave No.7",
+                        meta: "DATE 770/04/01 · SUPERVISOR Deathmark",
+                        text: "Has it started?\n\nAwoken from a dream..."
+
+                    }
+                ]
+            },
+            main4: {
+                chapterName: "Sewer Maze",
+                chapterImg: "img/main4.png",
+                category: "main",
+                contentList: [
+                    {
+                    }
+                ]
+            }
+        };
 
     </script>
 </body>

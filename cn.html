@@ -6,8 +6,8 @@
     <title>Game Collection UI</title>
     <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
-
 </head>
+
 <body>
     <div class="audio-panel">
         <button id="bgmToggle" title="Play / Pause"></button>
@@ -44,7 +44,7 @@
                         <div class="title">时钟链接</div>
                     </div>
                     <div class="card" onclick="play(sndCard); openDetail('main8')"><img src="img/main8.png">
-                        <div class="title">凌日潮汐</div>
+                        <div class="title">凌日潮汐</div> 
                     </div>
                 </div>
             </div>
@@ -84,9 +84,7 @@
                     <img src="img/limbo.png">
                     <div class="title">Limbo</div>
                 </div>
-
             </div>
-
         </div>
 
         <!-- COMPLETION -->
@@ -96,7 +94,6 @@
             </div>
             <div class="percent">100%</div>
         </div>
-
     </div>
 
     <!-- ===== DETAIL ===== -->
@@ -130,15 +127,14 @@
     <audio id="bgm" src="sound/Collecation0.mp3" preload="auto" loop></audio>
 
     <script>
+        /* ===== AUDIO SETUP ===== */
         const bgm = document.getElementById("bgm");
         const bgmToggle = document.getElementById("bgmToggle");
         const bgmVolume = document.getElementById("bgmVolume");
 
-        /* INITIAL STATE */
         bgm.volume = 0.4;
         bgmToggle.classList.add("pause");
 
-        /* AUTO PLAY WHEN PAGE LOAD */
         window.addEventListener("click", () => {
             if (bgm.paused) {
                 bgm.currentTime = 0;
@@ -146,10 +142,9 @@
             }
         }, { once: true });
 
-        /* PLAY / PAUSE BUTTON */
         bgmToggle.onclick = () => {
             if (bgm.paused) {
-                bgm.currentTime = 0;   // luôn phát lại từ đầu
+                bgm.currentTime = 0;
                 bgm.play();
                 bgmToggle.classList.remove("play");
                 bgmToggle.classList.add("pause");
@@ -160,14 +155,19 @@
             }
         };
 
-        /* VOLUME CONTROL */
         bgmVolume.oninput = () => {
             bgm.volume = bgmVolume.value / 100;
         };
 
+        /* ===== ELEMENT REFS ===== */
         const collection = document.getElementById("collectionView");
         const detail = document.getElementById("detailView");
-        const title = document.getElementById("title");
+        const titleEl = document.getElementById("title");
+        const metaEl = document.getElementById("meta");
+        const textEl = document.getElementById("text");
+        const fileList = document.getElementById("fileList");
+        const chapterImg = document.getElementById("chapterImg");
+        const chapterName = document.getElementById("chapterName");
 
         const sndCard = document.getElementById("sndCard");
         const sndBack = document.getElementById("sndBack");
@@ -176,33 +176,41 @@
         sndCard.volume = 0.5;
         sndBack.volume = 0.4;
         sndItem.volume = 0.35;
-        const meta = document.getElementById("meta");
-        const text = document.getElementById("text");
-        const fileList = document.getElementById("fileList");
-        const chapterImg = document.getElementById("chapterImg");
-        const chapterName = document.getElementById("chapterName");
 
-        function buildMeta(metaText, category) {
-            const parts = metaText.split(" · ");
-            return `<span>${parts[0]}</span><span>${parts[1]}</span><span>CATEGORY ${category}</span>`;
+        /* ===== HELPERS ===== */
+
+        /*
+         * Format meta: "DATE xxx · SUPERVISOR xxx · CATEGORY xxx"
+         * each part " · " become <span>.
+         */
+        function buildMeta(metaText) {
+            return metaText
+                .split(" · ")
+                .map(part => `<span>${part.trim()}</span>`)
+                .join("");
         }
 
+        function play(s) {
+            if (!s) return;
+            s.currentTime = 0;
+            s.play().catch(() => { });
+        }
+
+        /* ===== NAVIGATION ===== */
         function openDetail(key) {
             const chapter = CHAPTER_DATA[key];
             if (!chapter) return;
 
-            /* ===== FADE OUT COLLECTION ===== */
             collection.classList.add("fade-exit-active");
 
             setTimeout(() => {
-                /* ===== SWITCH VIEW ===== */
                 collection.style.display = "none";
                 collection.classList.remove("fade-exit-active");
 
                 detail.style.display = "block";
                 detail.classList.add("fade-enter");
 
-                /* ===== LOAD CHAPTER INFO ===== */
+                /* Load chapter info */
                 chapterImg.src = chapter.chapterImg;
                 chapterName.innerText = chapter.chapterName;
                 fileList.innerHTML = "";
@@ -213,26 +221,25 @@
                     div.innerText = item.name;
 
                     div.onclick = () => {
-                        play(sndItem); // 
+                        play(sndItem);
                         [...fileList.children].forEach(f => f.classList.remove("active"));
                         div.classList.add("active");
-                        title.innerText = item.name;
-                        meta.innerHTML = buildMeta(item.meta, chapter.category);
-                        text.innerText = item.text;
+                        titleEl.innerText = item.name;
+                        metaEl.innerHTML = buildMeta(item.meta);
+                        textEl.innerText = item.text;
                     };
 
                     fileList.appendChild(div);
 
-                    /* ===== AUTO LOAD FILE (NO SOUND) ===== */
+                    /* Auto-load first item (no sound) */
                     if (i === 0) {
                         div.classList.add("active");
-                        title.innerText = item.name;
-                        meta.innerHTML = buildMeta(item.meta, chapter.category);
-                        text.innerText = item.text;
+                        titleEl.innerText = item.name;
+                        metaEl.innerHTML = buildMeta(item.meta);
+                        textEl.innerText = item.text;
                     }
                 });
 
-                /* ===== FADE IN DETAIL ===== */
                 requestAnimationFrame(() => {
                     detail.classList.add("fade-enter-active");
                 });
@@ -244,25 +251,14 @@
             }, 250);
         }
 
-        function play(s) {
-            if (!s) return;
-            s.currentTime = 0;
-            s.play().catch(() => { });
-        }
-
         function back() {
-            play(sndBack);
-
-            // reset  detail before animate
             detail.classList.remove("fade-enter", "fade-enter-active", "fade-exit-active");
-
             detail.classList.add("fade-exit-active");
 
             setTimeout(() => {
                 detail.style.display = "none";
                 detail.classList.remove("fade-exit-active");
 
-                // show collection
                 collection.style.display = "block";
                 collection.classList.remove("fade-enter", "fade-enter-active", "fade-exit-active");
                 collection.classList.add("fade-enter");
@@ -274,42 +270,45 @@
                 setTimeout(() => {
                     collection.classList.remove("fade-enter", "fade-enter-active");
                 }, 400);
-
             }, 250);
         }
+
         function goLanguage() {
-            play(sndBack); // if you need sound
-            setTimeout(() => {
-                window.location.href = "language.html";
-            }, 150);
+            play(sndBack);
+            setTimeout(() => { window.location.href = "language.html"; }, 150);
         }
+
         function openExternal(url) {
-            play(sndCard);   // use current sound click 
-            setTimeout(() => {
-                window.open(url, "_blank");
-            }, 150);
+            play(sndCard);
+            setTimeout(() => { window.open(url, "_blank"); }, 150);
         }
-
-
-
     </script>
+
     <script>
-        /* DATA  */
+        /* ===== CHAPTER DATA ===== */
+        /*
+         * Format meta: "DATE xxx · SUPERVISOR xxx · CATEGORY xxx"
+         * use " · " to create different box.
+         */
         const CHAPTER_DATA = {
             main1: {
                 chapterName: "Glaciaxion",
                 chapterImg: "img/main1.png",
-                category: "main",
                 contentList: [
                     {
                         name: "Stave No.0",
-                        meta: "收集时间 770/05/21 · 保管单位 镜",
+                        meta: "DATE 770/05/21 · SUPERVISOR Mirror · CATEGORY main",
                         text: "摘自Phigros计划\n\n曾有流浪人\n未受洗礼\n未信神\n\n攀似绿箩藤\n圣石登宵\n持剑诰\n\n我要这\n穹顶降镐\n地霜共冰消\n渊无饥骨\n路非遥\n\n垂髫闻\n沉思莞尔\n\n教后生：何不\n振臂筑塔\n\n通云霄\n\n\u2003——2089.10.27"
                     },
                     {
                         name: "Stave No.1",
-                        meta: "DATE 770/05/22 · SUPERVISOR Mirror",
-                        text: "Like white vines on a holy stone..."
+                        meta: "DATE 770/03/22 · SUPERVISOR Deathmark · CATEGORY main",
+                        text: "Escape.\n\nNow that the rainbow fades,\nWhere,\nWhere else might it stay?\nWhere there be\nFragrance inside the posies,\nEchoes beneath the memories,\nSpirits from the awakened,\nDreams above the illusions,\nThere be my home."
+                    },
+                    {
+                        name: "Stave No.2",
+                        meta: "DATE 770/02/29 · SUPERVISOR Deathmark · CATEGORY main",
+                        text: "Glaciaxia, melting.\n\nChasing the sun went the birds o' gods,\nBeneath the poem shone the lights and howls.\nA bird summoned by the spring,\nA sword glittered for the win.\nMet at the summit, chased with the winds.\nDown fell the feathers, in rain they rinsed.\nA tongue that twisted, two shadows there stood,\nThe firmament above touched the recital at foot.\nListen, Mount Sierra, coiled by the wind -\nWhat was she saying?\nWhy was she crying?\nThe floods unleashed mercy no being,\nThe milk spilt needed no regretting.\nShould we rest, may we wait,\nNot too far the chance awaits."
                     }
                 ]
             },
@@ -317,39 +316,39 @@
             main2: {
                 chapterName: "Beneath the Trash",
                 chapterImg: "img/main2.png",
-                category: "main",
                 contentList: [
                     {
                         name: "Stave No.7",
-                        meta: "DATE 770/04/01 · SUPERVISOR Deathmark",
+                        meta: "DATE 770/04/01 · SUPERVISOR Deathmark · CATEGORY Main",
                         text: "Has it started?\n\nAwoken from a dream..."
                     }
                 ]
             },
+
             main3: {
                 chapterName: "Mazarine's End",
                 chapterImg: "img/main3.png",
-                category: "main",
                 contentList: [
                     {
                         name: "Stave No.7",
-                        meta: "DATE 770/04/01 · SUPERVISOR Deathmark",
+                        meta: "DATE 770/04/01 · SUPERVISOR Deathmark · CATEGORY Main",
                         text: "Has it started?\n\nAwoken from a dream..."
-
                     }
                 ]
             },
+
             main4: {
                 chapterName: "Sewer Maze",
                 chapterImg: "img/main4.png",
-                category: "main",
                 contentList: [
                     {
+                        name: "Stave No.1",
+                        meta: "DATE 770/00/00 · SUPERVISOR Unknown · CATEGORY Main",
+                        text: ""
                     }
                 ]
             }
         };
-
     </script>
 </body>
 

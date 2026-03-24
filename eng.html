@@ -14,7 +14,6 @@
         <input id="bgmVolume" type="range" min="0" max="100" value="40">
     </div>
 
-
     <!-- ===== COLLECTION VIEW ===== -->
     <div id="collectionView">
         <div class="lang-exit" onclick="goLanguage()" title="Exit"></div>
@@ -85,9 +84,7 @@
                     <img src="img/limbo.png">
                     <div class="title">Limbo</div>
                 </div>
-
             </div>
-
         </div>
 
         <!-- COMPLETION -->
@@ -97,7 +94,6 @@
             </div>
             <div class="percent">100%</div>
         </div>
-
     </div>
 
     <!-- ===== DETAIL ===== -->
@@ -131,15 +127,14 @@
     <audio id="bgm" src="sound/Collecation0.mp3" preload="auto" loop></audio>
 
     <script>
+        /* ===== AUDIO SETUP ===== */
         const bgm = document.getElementById("bgm");
         const bgmToggle = document.getElementById("bgmToggle");
         const bgmVolume = document.getElementById("bgmVolume");
 
-        /* INITIAL STATE */
         bgm.volume = 0.4;
         bgmToggle.classList.add("pause");
 
-        /* AUTO PLAY WHEN PAGE LOAD */
         window.addEventListener("click", () => {
             if (bgm.paused) {
                 bgm.currentTime = 0;
@@ -147,10 +142,9 @@
             }
         }, { once: true });
 
-        /* PLAY / PAUSE BUTTON */
         bgmToggle.onclick = () => {
             if (bgm.paused) {
-                bgm.currentTime = 0;   // luôn phát lại từ đầu
+                bgm.currentTime = 0;
                 bgm.play();
                 bgmToggle.classList.remove("play");
                 bgmToggle.classList.add("pause");
@@ -161,14 +155,19 @@
             }
         };
 
-        /* VOLUME CONTROL */
         bgmVolume.oninput = () => {
             bgm.volume = bgmVolume.value / 100;
         };
 
+        /* ===== ELEMENT REFS ===== */
         const collection = document.getElementById("collectionView");
         const detail = document.getElementById("detailView");
-        const title = document.getElementById("title");
+        const titleEl = document.getElementById("title");
+        const metaEl = document.getElementById("meta");
+        const textEl = document.getElementById("text");
+        const fileList = document.getElementById("fileList");
+        const chapterImg = document.getElementById("chapterImg");
+        const chapterName = document.getElementById("chapterName");
 
         const sndCard = document.getElementById("sndCard");
         const sndBack = document.getElementById("sndBack");
@@ -177,33 +176,41 @@
         sndCard.volume = 0.5;
         sndBack.volume = 0.4;
         sndItem.volume = 0.35;
-        const meta = document.getElementById("meta");
-        const text = document.getElementById("text");
-        const fileList = document.getElementById("fileList");
-        const chapterImg = document.getElementById("chapterImg");
-        const chapterName = document.getElementById("chapterName");
 
-        function buildMeta(metaText, category) {
-            const parts = metaText.split(" · ");
-            return `<span>${parts[0]}</span><span>${parts[1]}</span><span>CATEGORY ${category}</span>`;
+        /* ===== HELPERS ===== */
+
+        /*
+         * Format meta: "DATE xxx · SUPERVISOR xxx · CATEGORY xxx"
+         * each part " · " become <span>.
+         */
+        function buildMeta(metaText) {
+            return metaText
+                .split(" · ")
+                .map(part => `<span>${part.trim()}</span>`)
+                .join("");
         }
 
+        function play(s) {
+            if (!s) return;
+            s.currentTime = 0;
+            s.play().catch(() => { });
+        }
+
+        /* ===== NAVIGATION ===== */
         function openDetail(key) {
             const chapter = CHAPTER_DATA[key];
             if (!chapter) return;
 
-            /* ===== FADE OUT COLLECTION ===== */
             collection.classList.add("fade-exit-active");
 
             setTimeout(() => {
-                /* ===== SWITCH VIEW ===== */
                 collection.style.display = "none";
                 collection.classList.remove("fade-exit-active");
 
                 detail.style.display = "block";
                 detail.classList.add("fade-enter");
 
-                /* ===== LOAD CHAPTER INFO ===== */
+                /* Load chapter info */
                 chapterImg.src = chapter.chapterImg;
                 chapterName.innerText = chapter.chapterName;
                 fileList.innerHTML = "";
@@ -214,26 +221,25 @@
                     div.innerText = item.name;
 
                     div.onclick = () => {
-                        play(sndItem); // 
+                        play(sndItem);
                         [...fileList.children].forEach(f => f.classList.remove("active"));
                         div.classList.add("active");
-                        title.innerText = item.name;
-                        meta.innerHTML = buildMeta(item.meta, chapter.category);
-                        text.innerText = item.text;
+                        titleEl.innerText = item.name;
+                        metaEl.innerHTML = buildMeta(item.meta);
+                        textEl.innerText = item.text;
                     };
 
                     fileList.appendChild(div);
 
-                    /* ===== AUTO LOAD FILE (NO SOUND) ===== */
+                    /* Auto-load first item (no sound) */
                     if (i === 0) {
                         div.classList.add("active");
-                        title.innerText = item.name;
-                        meta.innerHTML = buildMeta(item.meta, chapter.category);
-                        text.innerText = item.text;
+                        titleEl.innerText = item.name;
+                        metaEl.innerHTML = buildMeta(item.meta);
+                        textEl.innerText = item.text;
                     }
                 });
 
-                /* ===== FADE IN DETAIL ===== */
                 requestAnimationFrame(() => {
                     detail.classList.add("fade-enter-active");
                 });
@@ -245,25 +251,14 @@
             }, 250);
         }
 
-        function play(s) {
-            if (!s) return;
-            s.currentTime = 0;
-            s.play().catch(() => { });
-        }
-
         function back() {
-            play(sndBack);
-
-            // reset  detail before animate
             detail.classList.remove("fade-enter", "fade-enter-active", "fade-exit-active");
-
             detail.classList.add("fade-exit-active");
 
             setTimeout(() => {
                 detail.style.display = "none";
                 detail.classList.remove("fade-exit-active");
 
-                // show collection
                 collection.style.display = "block";
                 collection.classList.remove("fade-enter", "fade-enter-active", "fade-exit-active");
                 collection.classList.add("fade-enter");
@@ -275,82 +270,155 @@
                 setTimeout(() => {
                     collection.classList.remove("fade-enter", "fade-enter-active");
                 }, 400);
-
             }, 250);
         }
+
         function goLanguage() {
-            play(sndBack); // if you need sound
-            setTimeout(() => {
-                window.location.href = "language.html";
-            }, 150);
+            play(sndBack);
+            setTimeout(() => { window.location.href = "language.html"; }, 150);
         }
+
         function openExternal(url) {
-            play(sndCard);   // use current sound click 
-            setTimeout(() => {
-                window.open(url, "_blank");
-            }, 150);
+            play(sndCard);
+            setTimeout(() => { window.open(url, "_blank"); }, 150);
         }
-
-
-
     </script>
+
     <script>
-        /* DATA  */
+        /* ===== CHAPTER DATA ===== */
+        /*
+         * Format meta: "DATE xxx · SUPERVISOR xxx · CATEGORY xxx"
+         * use " · " to create different box.
+         */
         const CHAPTER_DATA = {
             main1: {
                 chapterName: "Glaciaxion",
                 chapterImg: "img/main1.png",
-                category: "main",
                 contentList: [
                     {
                         name: "Stave No.0",
-                        meta: "DATE 770/05/21 · SUPERVISOR Mirror",
-                        text: "For once you were a wandering organism..."
+                        meta: "DATE 770/05/21 · SUPERVISOR Mirror · CATEGORY main",
+                        text: '(Excerpt from Phigros Project)\n\nFor once you were a wandering organism,\nWith no religion, yet received a baptism.\n\nLike white vines on a holy stone atop the firmament,\nWith the order the sword was drawn out of sheath.\n\nHow I want, the ice got scattered by an axe from the heavens,\nAnd hunger no longer haunts the abyss.\n\nThe elder listened, thought and sighed,\n"Build a tower to challenge the sky."'
                     },
                     {
                         name: "Stave No.1",
-                        meta: "DATE 770/05/22 · SUPERVISOR Mirror",
-                        text: "Like white vines on a holy stone..."
-                    }
+                        meta: "DATE 770/03/22 · SUPERVISOR Deathmark · CATEGORY main",
+                        text: "Escape.\n\nNow that the rainbow fades,\nWhere,\nWhere else might it stay?\nWhere there be\nFragrance inside the posies,\nEchoes beneath the memories,\nSpirits from the awakened,\nDreams above the illusions,\nThere be my home."
+                    },
+                    {
+                        name: "Stave No.2",
+                        meta: "DATE 770/02/29 · SUPERVISOR Deathmark · CATEGORY main",
+                        text: "Glaciaxia, melting.\n\nChasing the sun went the birds o' gods,\nBeneath the poem shone the lights and howls.\nA bird summoned by the spring,\nA sword glittered for the win.\nMet at the summit, chased with the winds.\nDown fell the feathers, in rain they rinsed.\nA tongue that twisted, two shadows there stood,\nThe firmament above touched the recital at foot.\nListen, Mount Sierra, coiled by the wind -\nWhat was she saying?\nWhy was she crying?\nThe floods unleashed mercy no being,\nThe milk spilt needed no regretting.\nShould we rest, may we wait,\nNot too far the chance awaits."
+                    },
+                    {
+                        name: "Stave No.3",
+                        meta: "DATE 770/03/01 · SUPERVISOR Deathmark · CATEGORY main",
+                        text: "Coo, coo, coo,\nBubble, bubble, bubble.\n\nFine fish skin with boiled white apple, take a sip and let your spirits free.\nA string twanged as a spur of the moment, wonder why someone would become addict.\nFor decades long there was no music but the sound of death near the river.Please just stay at my humble house, and detail what wind blew you here."
+                    },
+                    {
+                        name: "Stave No.4",
+                        meta: "DATE 770/03/06 · SUPERVISOR Deathmark · CATEGORY main",
+                        text: "Do people's identities really hold any value…\n\nWhoever lives owns a name,\nWhoever dies owns a name.\nFor fame being live,\nFor what the dead prolong?\nWould they, if ever, be reborn?"
+                    },
+                    {
+                        name: "Stave No.5",
+                        meta: "DATE 770/03/03 · SUPERVISOR Deathmark · CATEGORY main",
+                        text: "Unable to learn how to write poetry…\n\nSpring, the elusive season of recovery."
+                    },
+                    {
+                        name: "Stave No.6",
+                        meta: "DATE 770/03/32 · SUPERVISOR Deathmark · CATEGORY main",
+                        text: "Hikari.\n\nHere we are in the age of exile,\nShall irises bloom, and my mist die,\nLacerated by shafts o' light,\nSeeking path through the hazy sky."
+                    },
+                    {
+                        name: "[Item] The Alpa Pen",
+                        meta: "DATE 770/02/29 · SUPERVISOR Geopelia · CATEGORY bold",
+                        text: 'A pure white recording pen belonging to Geopelia. It has a mope sticker on the right, along with the names ""Geopelia"" and ""Falcon"" carved on the back.\nThe pen is equipped with an AI assistant called MeowAlpa, which records everything she writes.\nAlthough it does not have a conciousness, it occasionally produces strange noises, seemingly without cause.'
+                    },
+                    {
+                        name: "[Item] The Alpa Pen - Clue I",
+                        meta: "DATE 770/03/03 · SUPERVISOR Geopelia · CATEGORY bold",
+                        text: "Geopelia uses it to record what she hears, as well as any ideas that pop into her head. Over time Alpa has gathered a rich collection of often embarrasing, dark, or even incomprehensible meoms.\nGino: What do you even keep in this pen?\nGeopelia: My brother told me that secrets can only be shared width close friends. Are you my close friend?\nGino: Hmm… Hard to say. What do you think?\nGeopelia: Well, he also told me that friends won't pry into other's secrets. Soo, I guess you aren't!\nGino: Ah, I see your brother is truly a master of logic.\nGeopelia: He sure is!"
+                    },
+                    {
+                        name: "[Item] The Alpa Pen - Clue II",
+                        meta: "DATE 2083/09/03 · SUPERVISOR Geopelia · CATEGORY bold",
+                        text: "Geopelia has recieved the pen on her 10th birthday, and it has been her most treasured posession ever since.\nFalcon: A bit further… Aghhh!\n[A heavy object drops to the floor]\nJoiec: Geez, are you alright man?\nFalcon: I'm fine, it's just a scratch, I'll take care of it.\n[Falcon turned on the tap. The sink reflects the image of Alpa, sound asleep.]\nFalcon: I'm almost… there…"
+                    },
+                    {
+                        name: "[Item] The Alpa Pen - Clue III",
+                        meta: "DATE 770/03/06 · SUPERVISOR Geopelia · CATEGORY bold",
+                        text: "MeowAlpa was a college graduation project made by Geopelia's brother. Alpa's intelligence is a bit higher than an ordinary cat's, but it is still able to record, categorize, play back and change the format of anything Geopelia writes. Sometimes it leaves the pen, as a holographic cat.\nGeopelia: Alpa is soo quiet today…\nGino: It's probably sleeping. It's in standby, after all. Hey, you, newbie! Hurry up and finish the report, we want to go.\nGeopelia: Say, wanna grab dinner with me?\nGino: As long as it's not the biscuits...\nGeopelia: Roger that!"
+                    },
+                    {
+                        name: "[Rec] Mountain Breeze",
+                        meta: "DATE 770/02/29 · SUPERVISOR Geopelia · CATEGORY souvenir · LENGTH 10'32\"",
+                        text: "The audio records abnormal wuthering winds across the Wells. The howls and whistles echo through the walls, like the growls of otherwordly beasts.\nThe long, and high-pitched sound stopped after a few minutes, only to make way for a tide of stronger sounds, reverberating and bouncing around the well.\nWhispers cascade down, lamenting the icy doomsday, accompanied by the wind's whistles, create a twisted symphony -\n- Someone broke through the door, and the recording stopped abruptly."
+                    },
+                    {
+                        name: "[Item] Team VII Badge",
+                        meta: "DATE 770/03/02 · SUPERVISOR Geopelia · CATEGORY souvenir",
+                        text: "The proof of Geopelia's Team VII membership. It depicts an anemone blooming on a snowy field."
+                    },
+                    {
+                        name: "[Rec] Hot Pot",
+                        meta: "DATE 770/03/01 · SUPERVISOR Geopelia · CATEGORY souvenir · LENGTH 5'21\"",
+                        text: '"Inside the steaming copper hotpot, fine slices of fresh salmon are spinning in the oily broth.\nThe shiny, gray skin outlines the fillets, while green onion and coriander swirl and dance around them.\nAs the tongue touches the crisp, rich fish, it sizzles and melts inside the mouth, warms up the body, and frees the soul from the chilly weather outside. With every spoon, the heart becomes warmer, as all worries melt away."'
+                    },
+                    {
+                        name: "[Rec] Sleep",
+                        meta: "DATE 770/03/17 · SUPERVISOR Geopelia · CATEGORY main · LENGTH 21'5\"",
+                        text: 'The light was still lit.\nI opened the window.\nThe moon was swimming through the clouds,\nthe firmament was dyed with slashes of meteors.\nThe wind was coming from the distant tower, twisted and swirled into my cabin.\nThe icy weather made me shiver, so I had no choice but to close the windows and crawl back into my warm quilt.\nI turned my desktop on and began playing my recordings from the past, pen in hand.\nNever was a single word written.Given up on the work, I gazed out of the window again -\nthere seemed to be something different beyond the mist.\nThere was a tower - or maybe not, as it was too big to see its end, too tall to find its top. Wearing the clouds, it seemed to be accompanied with flying creatures - or more like whales - looking at my world from the heights.\n"How could there be such a tower...\nIt didn\'t exist yesterday.'
+                    },
+                    {
+                        name: "[Rec] Sleep - Clue I",
+                        meta: "DATE 770/03/17 · SUPERVISOR Geopelia · CATEGORY main",
+                        text: "Listening to Gino's even breathing, I can't help but follow the rhythm -\nOne, two, one, two...\nSo gentle and calm, comforting and reassuring.\n\"You still awake?\"\nThe rhythm stopped abruptly. Has he awkoen?\n\"Haven't I told you to… not to stay up too late...\"\nGino shook the bed frame, making it squeak slightly. I pushed on it, the noise stopped.\nAhh~~ So... Sleepy...\nI'll just rest for now, there is always tomorrow. And so today's diary ends here. Nighty night."
+                    },
+                    {
+                        name: "aaa",
+                        meta: "DATE 770/02/29 · SUPERVISOR Geopelia · CATEGORY souvenir",
+                        text: "aaaaaa"
+                    },
                 ]
             },
 
             main2: {
                 chapterName: "Beneath the Trash",
                 chapterImg: "img/main2.png",
-                category: "main",
                 contentList: [
                     {
                         name: "Stave No.7",
-                        meta: "DATE 770/04/01 · SUPERVISOR Deathmark",
+                        meta: "DATE 770/04/01 · SUPERVISOR Deathmark · CATEGORY Main",
                         text: "Has it started?\n\nAwoken from a dream..."
                     }
                 ]
             },
+
             main3: {
                 chapterName: "Mazarine's End",
                 chapterImg: "img/main3.png",
-                category: "main",
                 contentList: [
                     {
                         name: "Stave No.7",
-                        meta: "DATE 770/04/01 · SUPERVISOR Deathmark",
+                        meta: "DATE 770/04/01 · SUPERVISOR Deathmark · CATEGORY Main",
                         text: "Has it started?\n\nAwoken from a dream..."
-
                     }
                 ]
             },
+
             main4: {
                 chapterName: "Sewer Maze",
                 chapterImg: "img/main4.png",
-                category: "main",
                 contentList: [
                     {
+                        name: "Stave No.1",
+                        meta: "DATE 770/00/00 · SUPERVISOR Unknown · CATEGORY Main",
+                        text: ""
                     }
                 ]
             }
         };
-
     </script>
 </body>
 
